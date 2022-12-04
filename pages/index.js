@@ -2,6 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import HeroCard from "../components/heroCard";
+import ComicsList from "../components/comicsList";
 import { useState } from "react";
 const encryption = require("md5");
 
@@ -9,7 +10,7 @@ export default function Home() {
   // Local State
   //
   const [hero, setHero] = useState(null);
-  const [comics, setComics] = useState(null);
+  const [comics, setComics] = useState([]);
   // Api Calls
   //
   async function getHeroData(name) {
@@ -39,7 +40,8 @@ export default function Home() {
   //
   async function getComicsData(id) {
     const heroId = 1009262;
-    // Daredevil Id accesible with res.data.results[0].id
+    // Daredevil Id accesible 
+    // with res.data.results[0].id
     //
     const MarvelComicsApiCall = `https://gateway.marvel.com:443/v1/public/characters/${
       id > 0 ? id : heroId
@@ -59,7 +61,7 @@ export default function Home() {
         "Marvel Comics Resulst ---> ",
         res.data.results
       );
-      await setComics(res.data.results[0]);
+      await setComics(res.data.results);
     } catch (err) {
       console.log("Error: ", err);
     }
@@ -104,12 +106,9 @@ export default function Home() {
             />
           ) : null}
 
-          {/* {comics !== null ? (
-            <div className={styles.card}>
-              <h2>Documentation &rarr;</h2>
-              <p>Find in-depth information about Next.js features and API.</p>
-            </div>
-          ) : null} */}
+          {comics.length > 0 ? (
+            <ComicsList items={comics}/>
+          ) : null}
         </div>
       </main>
 
