@@ -1,9 +1,16 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import HeroCard from "../components/heroCard";
+import { useState } from "react";
 const encryption = require("md5");
 
 export default function Home() {
+  // Local State
+  //
+  const [hero, setHero] = useState(null);
+  const [comics, setComics] = useState(null);
+  // Api Calls
   //
   async function getHeroData(name) {
     const heroName = "Daredevil";
@@ -24,6 +31,7 @@ export default function Home() {
         "Marvel Api Character Resulst ---> ",
         res.data.results[0]
       );
+      await setHero(res.data.results[0]);
     } catch (err) {
       console.log("Error: ", err);
     }
@@ -51,6 +59,7 @@ export default function Home() {
         "Marvel Comics Resulst ---> ",
         res.data.results
       );
+      await setComics(res.data.results[0]);
     } catch (err) {
       console.log("Error: ", err);
     }
@@ -66,7 +75,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <div href="https://nextjs.org">Next.js!</div>
+          Welcome to <div href="https://nextjs.org">Super Directory</div>
         </h1>
 
         <p className={styles.description}>
@@ -75,16 +84,6 @@ export default function Home() {
         </p>
 
         <div className={styles.grid}>
-          <div className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </div>
-
-          <div className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </div>
-
           <div className={styles.card} onClick={getComicsData}>
             <h2>Get Comics Data &rarr;</h2>
             <p>Discover and deploy boilerplate example Next.js projects.</p>
@@ -96,6 +95,21 @@ export default function Home() {
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
           </div>
+          {hero !== null ? (
+            <HeroCard
+              name={hero.name}
+              details={hero.description}
+              url={hero.resourceUri}
+              img={`${hero.thumbnail.path}.${hero.thumbnail.extension}`}
+            />
+          ) : null}
+
+          {/* {comics !== null ? (
+            <div className={styles.card}>
+              <h2>Documentation &rarr;</h2>
+              <p>Find in-depth information about Next.js features and API.</p>
+            </div>
+          ) : null} */}
         </div>
       </main>
 
