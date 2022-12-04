@@ -1,8 +1,61 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+const encryption = require("md5");
 
 export default function Home() {
+  //
+  async function getHeroData(name) {
+    const heroName = "Daredevil";
+    //
+    const MarvelCharacterApiCall = `https://gateway.marvel.com:443/v1/public/characters?name=${
+      name.length > 0 ? name : heroName
+    }&ts=${1}&apikey=${process.env.NEXT_PUBLIC_MARVEL_PUBLIC}&hash=${encryption(
+      1 +
+        process.env.NEXT_PUBLIC_MARVEL_PRIVATE +
+        process.env.NEXT_PUBLIC_MARVEL_PUBLIC
+    )}`;
+    //
+    try {
+      const req = await fetch(MarvelCharacterApiCall);
+      const res = await req.json();
+      console.log(
+        MarvelCharacterApiCall,
+        "Marvel Api Character Resulst ---> ",
+        res.data.results[0]
+      );
+    } catch (err) {
+      console.log("Error: ", err);
+    }
+  }
+  //
+  async function getComicsData(id) {
+    const heroId = 1009262;
+    // Daredevil Id accesible with res.data.results[0].id
+    //
+    const MarvelComicsApiCall = `https://gateway.marvel.com:443/v1/public/characters/${
+      id > 0 ? id : heroId
+    }/comics?&ts=${1}&apikey=${
+      process.env.NEXT_PUBLIC_MARVEL_PUBLIC
+    }&hash=${encryption(
+      1 +
+        process.env.NEXT_PUBLIC_MARVEL_PRIVATE +
+        process.env.NEXT_PUBLIC_MARVEL_PUBLIC
+    )}`;
+    //
+    try {
+      const req = await fetch(MarvelComicsApiCall);
+      const res = await req.json();
+      console.log(
+        MarvelComicsApiCall,
+        "Marvel Comics Resulst ---> ",
+        res.data.results
+      );
+    } catch (err) {
+      console.log("Error: ", err);
+    }
+  }
+  //
   return (
     <div className={styles.container}>
       <Head>
@@ -13,57 +66,51 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to <div href="https://nextjs.org">Next.js!</div>
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
+          Get started by editing{" "}
           <code className={styles.code}>pages/index.js</code>
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
+          <div className={styles.card}>
             <h2>Documentation &rarr;</h2>
             <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          </div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
+          <div className={styles.card}>
             <h2>Learn &rarr;</h2>
             <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+          </div>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
+          <div className={styles.card} onClick={getComicsData}>
+            <h2>Get Comics Data &rarr;</h2>
             <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+          </div>
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
+          <div className={styles.card} onClick={getHeroData}>
+            <h2>Get Hero Data &rarr;</h2>
             <p>
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
-          </a>
+          </div>
         </div>
       </main>
 
       <footer className={styles.footer}>
-        <a
+        <div
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
-        </a>
+        </div>
       </footer>
     </div>
-  )
+  );
 }
