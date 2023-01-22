@@ -12,7 +12,7 @@ export default function HeroComics({ res }) {
         flexDirection: "column",
       }}
     >
-      <div>Hello from HeroList</div>
+      <div>Hello from HeroComics</div>
       <div>
         <ComicsList items={res} />
       </div>
@@ -35,6 +35,7 @@ export async function getServerSideProps({ params }) {
   //
   const req = await fetch(MarvelComicsApiCall);
   const data = await req.json();
+  console.log(data)
   return {
     props: { res: data.data.results },
   };

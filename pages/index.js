@@ -11,14 +11,15 @@ export default function Home() {
   //
   const [heroes, setHeroes] = useState([]);
   const [comics, setComics] = useState([]);
-  const input = useRef("");
+  const [input, setInput] = useState([]);
+  // const input = useRef("");
   // Api Calls
   //
   async function getHeroData() {
-    const heroName = "Punisher";
+    const heroName = "Hulk";
     //
     const MarvelCharacterApiCall = `https://gateway.marvel.com:443/v1/public/characters?name=${
-      input.current.length > 0 ? input.current : heroName
+      input.length > 0 ? input : heroName
     }&ts=${1}&apikey=${process.env.NEXT_PUBLIC_MARVEL_PUBLIC}&hash=${encryption(
       1 +
         process.env.NEXT_PUBLIC_MARVEL_PRIVATE +
@@ -31,7 +32,9 @@ export default function Home() {
       console.log(
         MarvelCharacterApiCall,
         "Marvel Api Character Resulst ---> ",
-        res.data
+        res.data,
+        process.env.NEXT_PUBLIC_MARVEL_PRIVATE,
+        process.env.NEXT_PUBLIC_MARVEL_PUBLIC
       );
       await setHeroes(res.data.results);
     } catch (err) {
@@ -39,7 +42,7 @@ export default function Home() {
       await setHeroes(null);
     }
   }
-  // 
+  //
   async function getComicsData() {
     const heroId = 1009262;
     // Daredevil Id accesible
@@ -85,8 +88,8 @@ export default function Home() {
           <code className={styles.code}>Heroes</code>!
         </p>
 
-        <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-          <form class="space-y-6" action="#">
+        <div class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+          <div class="space-y-6" action="#">
             <div>
               <label
                 for="input"
@@ -100,8 +103,8 @@ export default function Home() {
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Spider-man, Daredevil, Punisher..."
                 required
-                onChange={(e) => {
-                  input.current = e.target.value;
+                onChange={async (e) => {
+                  await setInput(e.target.value);
                 }}
               />
             </div>
@@ -121,10 +124,10 @@ export default function Home() {
                 Randomize
               </a>
             </div>
-          </form>
+          </div>
         </div>
 
-        <div className={styles.grid}>
+        <div style={{width:'100%'}}>
           {/* <div className={styles.card} onClick={getComicsData}>
             <h2>Get Comics Data &rarr;</h2>
             <p>Discover and deploy boilerplate example Next.js projects.</p>
@@ -145,10 +148,11 @@ export default function Home() {
             />
           ) : null} */}
 
-          {heroes.length !== undefined && heroes.length > 0 ? (
-            <div class='m-2 p-2'>
-
-            <HeroList items={heroes} />
+          {heroes !== undefined &&
+          heroes.length !== undefined &&
+          heroes.length > 0 ? (
+            <div class="mt-2">
+              <HeroList items={heroes} />
             </div>
           ) : (
             <div class="m-4">Could not find anything yet. </div>

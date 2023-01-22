@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function HeroList() {
   return (
-    <div>Hello from HeroList</div>
+    <div>Hello from HeroDetail</div>
   )
 }
