@@ -3,23 +3,34 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 // import HeroCard from "../components/heroCard";
 import HeroList from "../components/heroList";
-import { useState, useRef } from "react";
+import { getHeroData } from "../utils.js/hooks";
+import { useState, useEffect } from "react";
 const encryption = require("md5");
 
-export default function Home() {
-  // Local State
+export default function Home({ res }) {
   //
+  // Trying to make api calls a hook below and on getInitialProps comment:
+  //
+  // console.log("lol worked", res);
+  // useEffect(() => {
+  //    let holdData = getHeroData();
+  // setHeroes(holdData)
+  // },[])
+  //
+  // Local State
   const [heroes, setHeroes] = useState([]);
   const [comics, setComics] = useState([]);
-  const [input, setInput] = useState([]);
-  // const input = useRef("");
+  const [input, setInput] = useState("Wolverine");
+  //
+  useEffect(() => {
+    getHeroHomeData();
+  }, []);
   // Api Calls
   //
-  async function getHeroData() {
-    const heroName = "Hulk";
+  async function getHeroHomeData() {
     //
     const MarvelCharacterApiCall = `https://gateway.marvel.com:443/v1/public/characters?name=${
-      input.length > 0 ? input : heroName
+      input.length > 0 ? input : "Hulk"
     }&ts=${1}&apikey=${process.env.NEXT_PUBLIC_MARVEL_PUBLIC}&hash=${encryption(
       1 +
         process.env.NEXT_PUBLIC_MARVEL_PRIVATE +
@@ -109,7 +120,7 @@ export default function Home() {
               />
             </div>
             <button
-              onClick={getHeroData}
+              onClick={getHeroHomeData}
               // type="submit"
               class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
@@ -127,7 +138,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div style={{width:'100%'}}>
+        <div style={{ width: "100%" }}>
           {/* <div className={styles.card} onClick={getComicsData}>
             <h2>Get Comics Data &rarr;</h2>
             <p>Discover and deploy boilerplate example Next.js projects.</p>
@@ -155,23 +166,35 @@ export default function Home() {
               <HeroList items={heroes} />
             </div>
           ) : (
-            <div class="m-4">Could not find anything yet. </div>
+            <div class="m-4">
+              Could not find anything for{" "}
+              <span class="text-transparent bg-clip-text bg-gradient-to-l to-red-600 from-stone-800 font-bold">
+                {input}
+              </span>
+              .{" "}
+            </div>
           )}
         </div>
       </main>
 
       <footer className={styles.footer}>
         <div
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://marvel.com?none=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
           rel="noopener noreferrer"
         >
           Powered by{" "}
           <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+            <Image src="/marvel.png" alt="Vercel Logo" width={72} height={16} />
           </span>
         </div>
       </footer>
     </div>
   );
 }
+
+// Home.getInitialProps = async () => {
+//   const data = await getHeroData();
+//   // const data = await res.json();
+//   return { res: data };
+// };
